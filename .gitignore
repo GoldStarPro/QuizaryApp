@@ -5,22 +5,17 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
-# Log/OS Files
+# Log files
 *.log
 
 # Android Studio generated files and folders
+.idea/
+*.iml
 captures/
 .externalNativeBuild/
 .cxx/
 *.apk
 output-metadata.json
-
-# IntelliJ
-*.iml
-.idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
 
 # Keystore files
 *.jks
@@ -28,6 +23,13 @@ render.experimental.xml
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+google-services.json.bak
+crashlytics.properties
+fabric.properties
 
 # Android Profiling
 *.hprof
+
+# OS-specific files
+.DS_Store
+Thumbs.db
