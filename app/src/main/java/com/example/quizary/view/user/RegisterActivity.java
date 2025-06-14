@@ -1,26 +1,55 @@
 package com.example.quizary.view.user;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.quizary.R;
+import com.example.quizary.viewmodel.UserViewModel;
 
 public class RegisterActivity extends AppCompatActivity {
+    private UserViewModel userViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+
+        EditText usernameInput = findViewById(R.id.username_input);
+        EditText emailInput = findViewById(R.id.email_input);
+        EditText passwordInput = findViewById(R.id.password_input);
+        Button registerButton = findViewById(R.id.register_button);
+        TextView loginLink = findViewById(R.id.login_link);
+
+        registerButton.setOnClickListener(v -> {
+            String username = usernameInput.getText().toString().trim();
+            String email = emailInput.getText().toString().trim();
+            String password = passwordInput.getText().toString().trim();
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(RegisterActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            userViewModel.register(username, password, email);
+        });
+
+        loginLink.setOnClickListener(v -> {
+            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            finish();
+        });
+
+        userViewModel.getErrorMessage().observe(this, message -> {
+            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_SHORT).show();
+            if (message.equals("Registration successful")) {
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                finish();
+            }
         });
     }
 }
