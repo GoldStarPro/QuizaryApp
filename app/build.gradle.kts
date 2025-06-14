@@ -44,6 +44,9 @@ dependencies {
     implementation (libs.lifecycle.livedata)
     implementation (libs.recyclerview)
 
+    // BCrypt for password hashing
+    implementation (libs.jbcrypt)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

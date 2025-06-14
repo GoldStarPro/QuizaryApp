@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.quizary.R;
+import com.example.quizary.view.MainActivity;
+import com.example.quizary.view.admin.AdminActivity;
 import com.example.quizary.viewmodel.UserViewModel;
 
 public class LoginActivity extends AppCompatActivity {
@@ -28,8 +30,12 @@ public class LoginActivity extends AppCompatActivity {
         TextView registerLink = findViewById(R.id.register_link);
 
         loginButton.setOnClickListener(v -> {
-            String username = usernameInput.getText().toString();
-            String password = passwordInput.getText().toString();
+            String username = usernameInput.getText().toString().trim();
+            String password = passwordInput.getText().toString().trim();
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
             userViewModel.login(username, password);
         });
 
@@ -38,7 +44,12 @@ public class LoginActivity extends AppCompatActivity {
         userViewModel.getLoginResult().observe(this, user -> {
             if (user != null) {
                 Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate to main activity
+                if ("ADMIN".equals(user.getRole())) {
+                    startActivity(new Intent(LoginActivity.this, AdminActivity.class));
+                } else {
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                }
+                finish();
             }
         });
 

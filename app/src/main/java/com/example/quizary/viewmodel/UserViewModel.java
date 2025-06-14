@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import com.example.quizary.data.repository.UserRepository;
 import com.example.quizary.model.User;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 public class UserViewModel extends AndroidViewModel {
     private final UserRepository userRepository;
     private final MutableLiveData<User> loginResult = new MutableLiveData<>();
@@ -31,14 +33,15 @@ public class UserViewModel extends AndroidViewModel {
             errorMessage.setValue("Username already exists");
             return;
         }
-        User user = new User(username, password, email);
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        User user = new User(username, hashedPassword, email, "USER");
         userRepository.registerUser(user, () -> errorMessage.postValue("Registration successful"));
     }
 
     public void login(String username, String password) {
         new Thread(() -> {
-            User user = userRepository.loginUser(username, password);
-            if (user != null) {
+            User user = userRepository.getUserByUsername(username);
+            if (user != null && BCrypt.checkpw(password, user.getPassword())) {
                 loginResult.postValue(user);
             } else {
                 errorMessage.postValue("Invalid username or password");
